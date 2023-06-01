@@ -8,8 +8,7 @@ main_menu = ReplyKeyboardBuilder([
 ])
 main_menu.adjust(2)
 
-support = ReplyKeyboardBuilder([
-    [KeyboardButton(
-        text="@taksi_clone_bot botining TAXIDASUPPORT (https://t.me/all_nc) bilan bog'lanish"
-    )]
+
+back_to_main = ReplyKeyboardBuilder([
+    [KeyboardButton(text='🔝 Asosiy Menyu')]
 ])
