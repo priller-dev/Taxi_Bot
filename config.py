@@ -28,7 +28,7 @@ class BotConfig(BaseConfig):
     TOKEN: str = getenv("TOKEN")
 
     WEB_SERVER_HOST: str = "localhost"
-    WEB_SERVER_PORT: int = 8080
+    WEB_SERVER_PORT: int = 8001
     BOT_PATH: str = "/webhook/main"
 
 
