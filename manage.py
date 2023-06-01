@@ -1,3 +1,4 @@
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.webhook.aiohttp_server import (
     SimpleRequestHandler,
     setup_application,
@@ -6,6 +7,8 @@ from aiohttp.web import run_app
 from aiohttp.web_app import Application
 from config import conf
 from db import db
+from handlers.auth import auth_router
+from handlers.button_handlers import buttons_router
 from utils.tables import create_tables
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
@@ -21,10 +24,12 @@ def main():
     session = AiohttpSession()
     bot = Bot(conf.bot.TOKEN, session=session, parse_mode="HTML")
 
-    dp = Dispatcher()  # noqa
-    dp.include_router(main_router) # noqa
-    dp.startup.register(on_startup) # noqa
-    dp.shutdown.register(db.close) # noqa
+    dp = Dispatcher(storage=MemoryStorage())
+    dp.include_router(main_router)
+    dp.include_router(buttons_router)
+    dp.include_router(auth_router)
+    dp.startup.register(on_startup)
+    dp.shutdown.register(db.close)
 
     app = Application()
 
