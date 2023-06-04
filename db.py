@@ -31,7 +31,7 @@ class Database:
 
     async def exists(self, field: str, value: str, table: str) -> None:
         query = f'select {field} from {table} where {field}=$1 limit 1'
-        return not not await self.pool.fetch(query, value)
+        return not not await self.pool.fetchval(query, value)
 
     async def close(self, dp=None) -> None:
         await self.pool.close()
