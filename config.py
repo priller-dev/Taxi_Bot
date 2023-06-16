@@ -26,6 +26,7 @@ class BotConfig(BaseConfig):
     """Bot configuration"""
     BASE_URL: str = getenv("BASE_URL")
     TOKEN: str = getenv("TOKEN")
+    ROOT_FOLDER: str = getenv("ROOT_FOLDER")
 
     WEB_SERVER_HOST: str = "localhost"
     WEB_SERVER_PORT: int = 8080

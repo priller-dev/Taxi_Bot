@@ -5,9 +5,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
 from aiogram.types import Message
 
-from keyboards.default import main_menu, send_phone
-from states import AuthState
-from utils.tables import create_user
+from keyboards.default import main_menu, send_phone, where_you_go
+from states import AuthState, AuthDriverState
+from utils.misc import car_names
+from utils.tables import create_user, car_number_is_unique, get_user_by_id, get_car_id_by_name, \
+    create_driver
 
 auth_router = Router()
 
@@ -52,7 +54,7 @@ async def process_phone(message: Message, state: FSMContext):
     data = await state.get_data()
     data['phone'] = message.contact.phone_number
     await create_user([message.from_user.id, *data.values()])
-    photo = FSInputFile('/home/user/projects/aiogram_projects/taksi_bot/images/taksi.jpeg')
+    photo = FSInputFile(ROOT_FOLDER + 'images/taksi.jpeg')
     await message.answer_photo(
         caption=f"""
 😊 Assalomu aleykum ,
@@ -65,3 +67,22 @@ o'zingizga maqul bo`limni tanlang
         reply_markup=main_menu.as_markup(resize_keyboard=True)
     )
     await state.clear()
+
+
+@auth_router.message(AuthDriverState.car_name)
+async def process_car_name(message: Message, state: FSMContext):
+    if message.text in car_names:
+        await state.update_data(car_name=message.text)
+        await state.set_state(AuthDriverState.car_number)
+        return await message.answer("❓ Moshinangiz raqamini kiriting:\nNamuna: 01 A 060 BA")
+
+@auth_router.message(AuthDriverState.car_number)
+async def process_car_name(message: Message, state: FSMContext):
+    if await car_number_is_unique(message.text):
+        data = await state.get_data()
+        await state.clear()
+        user_id = (await get_user_by_id(message.from_user.id))['id']
+        car_id = await get_car_id_by_name(data['car_name'])
+        await create_driver([user_id, car_id, message.text])
+        return await message.answer("❓ Qayerga borasiz?", reply_markup=where_you_go.as_markup(resize_keyboard=True)) # noqa
+    await message.answer("❗️ Ushbu avtomobil raqami avval ro'yxatdan o'tgan")

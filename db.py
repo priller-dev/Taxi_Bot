@@ -2,7 +2,6 @@ from typing import Optional, Iterable
 
 from asyncpg import create_pool, Pool
 from config import conf
-from loguru import logger
 
 
 class Database:
@@ -22,7 +21,6 @@ class Database:
             host=self.host,
             port=self.port
         )
-        logger.success('🟢 successfully connected!')
 
     async def execute_multiple(self, *queries: Iterable) -> None:
         """executes multiple queries at once"""
@@ -35,7 +33,6 @@ class Database:
 
     async def close(self, dp=None) -> None:
         await self.pool.close()
-        logger.info('🔴 successfully disconnected')
 
 
 db = Database(**conf.db.asdict())

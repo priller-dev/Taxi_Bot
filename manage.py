@@ -13,7 +13,8 @@ from db import db
 from handlers.auth import auth_router
 from handlers.button_handlers import buttons_router
 from handlers.order_taxi import order_taxi_router
-from utils.tables import create_tables
+from handlers.take_client import take_client_router
+from utils.tables import create_tables, create_cars_if_not_exists
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 from main import main_router
@@ -21,6 +22,7 @@ from main import main_router
 async def on_startup(dispatcher: Dispatcher, bot: Bot):
     await db.connect()
     await create_tables()
+    await create_cars_if_not_exists()
     await bot.set_my_commands([
         BotCommand(command='start', description='botni start qiladi'),
         BotCommand(command='cancel', description='bekor qilish')
@@ -37,6 +39,7 @@ def main():
     dp.include_router(buttons_router)
     dp.include_router(auth_router)
     dp.include_router(order_taxi_router)
+    dp.include_router(take_client_router)
     dp.startup.register(on_startup)
     dp.shutdown.register(db.close)
 
